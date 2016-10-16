@@ -25,7 +25,9 @@ public class Backend {
         p1.setCreated("Hace 4h");
         p1.setSubreddit("/r/today");
         p1.setComments("2112 comentarios");
-        p1.setImage(R.drawable.ic_launcher);
+        p1.setmUrl("http://japanlover.me/goodies/kawaii/02-icons/nomnom-01.png");
+        //p1.setImage(R.drawable.ic_launcher);
+
 
         PostModel p2 = new PostModel();
         p2.setTitle("It's official. Old and new Note 7 phones are to be powered down and stop being used.");
@@ -33,7 +35,8 @@ public class Backend {
         p2.setCreated("Hace 5h");
         p2.setSubreddit("/r/Android");
         p2.setComments("1148 comentarios");
-        p2.setImage(R.drawable.ic_launcher);
+        //p2.setImage(R.drawable.ic_launcher);
+        p2.setmUrl("http://japanlover.me/goodies/kawaii/02-icons/nomnom-01.png");
 
         PostModel p3 = new PostModel();
         p3.setTitle("Chrome 55 will reduce RAM consumption as much as 50% compared to v53");
@@ -41,7 +44,8 @@ public class Backend {
         p3.setCreated("Hace 8h");
         p3.setSubreddit("/r/Android");
         p3.setComments("130 comentarios");
-        p3.setImage(R.drawable.ic_launcher);
+        //p3.setImage(R.drawable.ic_launcher);
+        p3.setmUrl("http://japanlover.me/goodies/kawaii/02-icons/nomnom-01.png");
 
         PostModel p4 = new PostModel();
         p4.setTitle("VisualVM migrated to GitHub");
@@ -49,7 +53,8 @@ public class Backend {
         p4.setCreated("Hace 15h");
         p4.setSubreddit("/r/java");
         p4.setComments("13 comentarios");
-        p4.setImage(R.drawable.ic_launcher);
+        //p4.setImage(R.drawable.ic_launcher);
+        p4.setmUrl("http://japanlover.me/goodies/kawaii/02-icons/nomnom-01.png");
 
         PostModel p5 = new PostModel();
         p5.setTitle("Moving old data to separate tablespace?");
@@ -57,7 +62,8 @@ public class Backend {
         p5.setCreated("Hace 16h");
         p5.setSubreddit("/r/oracle");
         p5.setComments("3 comentarios");
-        p5.setImage(R.drawable.ic_launcher);
+        //p5.setImage(R.drawable.ic_launcher);
+        p5.setmUrl("http://japanlover.me/goodies/kawaii/02-icons/nomnom-01.png");
 
         mListPostModel.add(p1);
         mListPostModel.add(p2);

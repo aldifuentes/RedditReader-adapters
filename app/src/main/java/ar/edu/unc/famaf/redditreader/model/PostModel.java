@@ -10,6 +10,7 @@ public class PostModel {
     private String mSubreddit;
     private String mComments;
     private int mImage;
+    private String mUrl;
 
     public PostModel(String mTitle, String mAuthor, String mCreated, String mSubreddit, String mComments, int mImage) {
         super();
@@ -74,4 +75,12 @@ public class PostModel {
         this.mImage = mImage;
     }
 
+
+    public String getmUrl() {
+        return mUrl;
+    }
+
+    public void setmUrl(String mUrl) {
+        this.mUrl = mUrl;
+    }
 }
