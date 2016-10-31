@@ -29,7 +29,18 @@ public class NewsActivityFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_news, container, false);
 
-        PostAdapter adapter = new PostAdapter(this.getContext(), R.layout.listview_item_row, Backend.getInstance().getTopPosts() );
+        List<PostModel> tmp = Backend.getInstance().getTopPosts();
+
+
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        PostAdapter adapter = new PostAdapter(this.getContext(), R.layout.listview_item_row, tmp);
 
         ListView postsLV = (ListView) v.findViewById(R.id.postsLV);
         postsLV.setAdapter(adapter);

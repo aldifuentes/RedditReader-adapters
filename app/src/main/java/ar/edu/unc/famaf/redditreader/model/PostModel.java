@@ -22,6 +22,16 @@ public class PostModel {
         this.mImage = mImage;
     }
 
+    public PostModel(String mTitle, String mAuthor, String mCreated, String mSubreddit, String mComments, String mUrl) {
+        super();
+        this.mTitle = mTitle;
+        this.mAuthor = mAuthor;
+        this.mCreated = mCreated;
+        this.mSubreddit = mSubreddit;
+        this.mComments = mComments;
+        this.mUrl = mUrl;
+    }
+
     public PostModel() {
         super();
     }
@@ -76,11 +86,12 @@ public class PostModel {
     }
 
 
-    public String getmUrl() {
+    public String getUrl() {
         return mUrl;
     }
 
-    public void setmUrl(String mUrl) {
+    public void setUrl(String mUrl) {
         this.mUrl = mUrl;
     }
+
 }

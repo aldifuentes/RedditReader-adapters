@@ -56,9 +56,7 @@ public class PostAdapter extends ArrayAdapter {
             LayoutInflater vi = (LayoutInflater) getContext().getSystemService(
                     Context.LAYOUT_INFLATER_SERVICE);
             convertView = vi.inflate(R.layout.listview_item_row, null);
-
             holder = new PostHolder();
-            holder.position = position;
             holder.icon = (ImageView)convertView.findViewById(R.id.icon);
             holder.subreddit = (TextView)convertView.findViewById(R.id.subreddit);
             holder.hour = (TextView)convertView.findViewById(R.id.hour);
@@ -70,30 +68,31 @@ public class PostAdapter extends ArrayAdapter {
         } else{
             holder = (PostHolder) convertView.getTag();
         }
-            //ImageView icon = (ImageView)convertView.findViewById(R.id.icon);
-            //TextView subreddit = (TextView)convertView.findViewById(R.id.subreddit);
-            //TextView hour = (TextView)convertView.findViewById(R.id.hour);
-            //TextView title = (TextView)convertView.findViewById(R.id.title);
-            //TextView comments = (TextView)convertView.findViewById(R.id.comments);
-
-            PostModel pm = mListPostModel.get(position);
+        //ImageView icon = (ImageView)convertView.findViewById(R.id.icon);
+        //TextView subreddit = (TextView)convertView.findViewById(R.id.subreddit);
+        //TextView hour = (TextView)convertView.findViewById(R.id.hour);
+        //TextView title = (TextView)convertView.findViewById(R.id.title);
+        //TextView comments = (TextView)convertView.findViewById(R.id.comments);
 
 
-            try {
-                URL[] urlArray = new URL[1];
-                urlArray[0] = new URL(pm.getmUrl());
-                DownloadImageAsyncTask imageAsyncTask = new DownloadImageAsyncTask(holder, position);
-                imageAsyncTask.execute(urlArray);
-            }catch(Exception e){
-                e.printStackTrace();
-            }
+        PostModel pm = mListPostModel.get(position);
+
+        try {
+            URL[] urlArray = new URL[1];
+            urlArray[0] = new URL(pm.getUrl());
+            holder.position = position;
+            DownloadImageAsyncTask imageAsyncTask = new DownloadImageAsyncTask(holder, position);
+            imageAsyncTask.execute(urlArray);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
 
 
-            holder.icon.setImageResource(pm.getImage());
-            holder.subreddit.setText(pm.getSubreddit());
-            holder.hour.setText(pm.getCreated());
-            holder.title.setText(pm.getTitle());
-            holder.comments.setText(pm.getComments());
+        holder.icon.setImageResource(pm.getImage());
+        holder.subreddit.setText(pm.getSubreddit());
+        holder.hour.setText(pm.getCreated());
+        holder.title.setText(pm.getTitle());
+        holder.comments.setText(pm.getComments());
 
 
 
