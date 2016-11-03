@@ -74,16 +74,20 @@ public class Backend {
 
     }
 
-    public void setTopPosts(Listing posts) {
-        this.mListPostModel.clear();
-        this.mListPostModel.addAll(posts.getPostModelList());
-    }
-
-    public List<PostModel> getTopPosts() {
+    public void getTopPosts(final TopPostIterator iterator) {
         // TODO: implement me
 
-        GetTopPostsTask getTopPostsTask = new GetTopPostsTask(this);
-        getTopPostsTask.execute("https://www.reddit.com/top/.json?limit=50");
-        return mListPostModel;
+        //GetTopPostsTask getTopPostsTask = new GetTopPostsTask(this);
+       // getTopPostsTask.execute("https://www.reddit.com/top/.json?limit=50");}
+        new GetTopPostsTask() {
+            @Override
+            protected void onPostExecute(Listing response) {
+                Backend.this.mListPostModel.clear();
+                Backend.this.mListPostModel.addAll(response.getPostModelList());
+                iterator.nextPosts(mListPostModel);
+            }
+        }.execute("https://www.reddit.com/top/.json?limit=50");
+        //return mListPostModel;
+
     }
 }
