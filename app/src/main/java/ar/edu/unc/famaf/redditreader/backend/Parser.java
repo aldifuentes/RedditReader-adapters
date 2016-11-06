@@ -119,6 +119,7 @@ public class Parser {
                     break;
                 case "thumbnail":
                     post.setUrl(reader.nextString());
+                    //post.setImage(post.getBitmapFromString(reader.nextString()));
                     break;
                 default:
                     reader.skipValue();

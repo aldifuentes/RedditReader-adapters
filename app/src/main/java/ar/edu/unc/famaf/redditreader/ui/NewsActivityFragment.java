@@ -17,6 +17,7 @@ import java.util.List;
 
 import ar.edu.unc.famaf.redditreader.R;
 import ar.edu.unc.famaf.redditreader.backend.Backend;
+import ar.edu.unc.famaf.redditreader.backend.RedditDBHelper;
 import ar.edu.unc.famaf.redditreader.backend.TopPostIterator;
 import ar.edu.unc.famaf.redditreader.model.PostModel;
 
@@ -35,15 +36,16 @@ public class NewsActivityFragment extends Fragment {
 
         final View v = inflater.inflate(R.layout.fragment_news, container, false);
 
+        RedditDBHelper db = RedditDBHelper.getInstance(this.getContext());
 
-            Backend.getInstance().getTopPosts(new TopPostIterator() {
-                @Override
-                public void nextPosts(List<PostModel> lst) {
-                    PostAdapter adapter = new PostAdapter(getActivity(), R.layout.listview_item_row, lst);
-                    ListView postsLV = (ListView) getView().findViewById(R.id.postsLV);
-                    postsLV.setAdapter(adapter);
-                }
-            });
+        Backend.getInstance().getTopPosts(new TopPostIterator() {
+            @Override
+            public void nextPosts(List<PostModel> lst) {
+                PostAdapter adapter = new PostAdapter(getActivity(), R.layout.listview_item_row, lst);
+                ListView postsLV = (ListView) getView().findViewById(R.id.postsLV);
+                postsLV.setAdapter(adapter);
+            }
+        });
 
 //
 //            try {
@@ -72,14 +74,8 @@ public class NewsActivityFragment extends Fragment {
 
 
 }
-    // Conectar Adapter con Fragment
 
-/*
-    PostAdapter adapter = new PostAdapter(this.getContext(), R.layout.listview_item_row, Backend.getInstance().getTopPosts() );
-        View v = getActivity().findViewById(R.id.postsLV);
-        ListView postsLV = (ListView) v;
-        postsLV.setAdapter(adapter);
-    * */
+
 
 
 

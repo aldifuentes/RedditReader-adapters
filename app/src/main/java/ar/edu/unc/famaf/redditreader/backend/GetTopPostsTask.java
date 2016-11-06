@@ -35,6 +35,8 @@ public class GetTopPostsTask extends AsyncTask<String, Integer, Listing>{
 
                 response = parser.readJsonStream(in);
 
+
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

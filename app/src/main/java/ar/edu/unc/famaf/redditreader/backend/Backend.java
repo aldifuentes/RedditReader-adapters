@@ -16,8 +16,11 @@ public class Backend {
 
     private List<PostModel> mListPostModel;
 
+
     private Backend() {
         mListPostModel = new ArrayList<PostModel>();
+
+
 //
 //
 //        PostModel p1 = new PostModel();
@@ -82,8 +85,17 @@ public class Backend {
         new GetTopPostsTask() {
             @Override
             protected void onPostExecute(Listing response) {
+                RedditDBHelper db = RedditDBHelper.getInstance(null);
+
+                if (response.getPostModelList().size() == 50) {
+                    db.deleteAllPosts();
+                    for (PostModel p : response.getPostModelList()) {
+                        db.addPost(p);
+                    }
+                }
+
                 Backend.this.mListPostModel.clear();
-                Backend.this.mListPostModel.addAll(response.getPostModelList());
+                Backend.this.mListPostModel.addAll(db.getAllPosts());
                 iterator.nextPosts(mListPostModel);
             }
         }.execute("https://www.reddit.com/top/.json?limit=50");

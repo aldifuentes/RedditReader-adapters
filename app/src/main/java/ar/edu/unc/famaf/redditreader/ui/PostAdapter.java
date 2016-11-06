@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -20,6 +21,7 @@ import java.net.URL;
 import java.util.List;
 
 import ar.edu.unc.famaf.redditreader.R;
+import ar.edu.unc.famaf.redditreader.backend.RedditDBHelper;
 import ar.edu.unc.famaf.redditreader.model.PostModel;
 
 /**
@@ -149,11 +151,17 @@ public class PostAdapter extends ArrayAdapter {
 
         @Override
         protected void onPostExecute(Bitmap result){
+            RedditDBHelper db = RedditDBHelper.getInstance(null);
+
+            db.updateImage(mHolder.title.toString(), result);
+
             if (mHolder.position == mPosition) {
-                mHolder.icon.setImageBitmap(result);
+                mHolder.icon.setImageBitmap(db.getImage(mHolder.title.toString()));
             }
             mHolder.progressBar.setVisibility(View.GONE);
         }
+
+
     }
 
 }
