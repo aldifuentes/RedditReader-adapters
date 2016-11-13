@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -106,10 +107,12 @@ public class Parser {
                     post.setAuthor(reader.nextString());
                     break;
                 case "created":
-                    //long dv = Long.valueOf(reader.nextString())*1000;// its need to be in milisecond
-                    //Date df = new java.util.Date(dv);
-                    //String vv = new SimpleDateFormat("MM'/'dd'/'y hh:mm").format(df);
-                    post.setCreated(reader.nextString());
+                    String tmp = reader.nextString();
+                    tmp = tmp.substring(0, tmp.length() - 2);
+                    long timeStamp = Long.parseLong(tmp) * 1000;
+                    DateFormat sdf = new SimpleDateFormat("dd/M/yyyy hh:mm");
+                    Date netDate = (new Date(timeStamp));
+                    post.setCreated(sdf.format(netDate));
                     break;
                 case "subreddit":
                     post.setSubreddit("/r/"+reader.nextString());

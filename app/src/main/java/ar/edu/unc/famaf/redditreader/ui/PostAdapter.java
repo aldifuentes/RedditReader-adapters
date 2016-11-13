@@ -153,10 +153,11 @@ public class PostAdapter extends ArrayAdapter {
         protected void onPostExecute(Bitmap result){
             RedditDBHelper db = RedditDBHelper.getInstance(null);
 
-            db.updateImage(mHolder.title.toString(), result);
+            int res = db.updateImage(mHolder.title.getText().toString(), result);
 
             if (mHolder.position == mPosition) {
-                mHolder.icon.setImageBitmap(db.getImage(mHolder.title.toString()));
+                Bitmap tmp = db.getImage(mHolder.title.getText().toString());
+                mHolder.icon.setImageBitmap(tmp);
             }
             mHolder.progressBar.setVisibility(View.GONE);
         }

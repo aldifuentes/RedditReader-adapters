@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 ;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -132,23 +133,27 @@ public class RedditDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(IMAGE, getBytes(bitmap));
+        byte[] bytes = getBytes(bitmap);
+        values.put(IMAGE, bytes);
 
-        return db.update(REDDIT_TABLE, values, TITLE + " = ?",
-                new String[] { String.valueOf(title) });
+        return db.update(REDDIT_TABLE, values, TITLE + " = ?", new String[] { title });
     }
 
     public Bitmap getImage(String title) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(REDDIT_TABLE, null, TITLE + " LIKE ?",
-                new String[] { String.valueOf(title) }, null, null, null, null);
+        Cursor cursor = db.query(REDDIT_TABLE, null, TITLE + " = ?",
+                new String[] { title }, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
-
-
-        return getImage(cursor.getBlob(0));
+        try{
+            return getImage(cursor.getBlob(6));
+        }catch(Exception e){
+            e.printStackTrace();
+            System.out.println("ERROR EN getImage");
+            return null;
+        }
     }
 
 
