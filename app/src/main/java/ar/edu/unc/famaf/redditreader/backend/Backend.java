@@ -17,6 +17,9 @@ public class Backend {
     private List<PostModel> mListPostModel;
 
 
+    private int countReturnedPosts = 0;
+
+
     private Backend() {
         mListPostModel = new ArrayList<PostModel>();
 
@@ -101,5 +104,41 @@ public class Backend {
         }.execute("https://www.reddit.com/top/.json?limit=50");
         //return mListPostModel;
 
+    }
+
+    public void getNextPosts(final PostsIteratorListener listener) {
+        new GetNextPostsTask() {
+            @Override
+            protected  void onPostExecute(Listing response) {
+                System.out.println("[*] onPostExecute -> " + response.getPostModelList().size() + " - " + countReturnedPosts);
+
+                RedditDBHelper db = RedditDBHelper.getInstance(null);
+
+                if (response.getPostModelList().size() == 50) {
+                    for (PostModel p : response.getPostModelList()) {
+                        db.addPost(p);
+                    }
+                }
+
+                listener.nextPosts(db.getNextFivePosts(countReturnedPosts));
+                countReturnedPosts += 5;
+
+
+                /*
+                List<PostModel> postsList = new ArrayList<PostModel>();
+                PostModel p1 = new PostModel();
+                p1.setTitle("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor");
+                p1.setAuthor("Autor1");
+                p1.setCreated("Hace 4h");
+                p1.setSubreddit("/r/today");
+                p1.setComments("2112 comentarios");
+                p1.setUrl("http://japanlover.me/goodies/kawaii/02-icons/nomnom-01.png");
+                postsList.add(p1);postsList.add(p1);postsList.add(p1);postsList.add(p1);postsList.add(p1);
+
+                listener.nextPosts(postsList);
+                countReturnedPosts += 5;
+                */
+            }
+        }.execute(countReturnedPosts);
     }
 }

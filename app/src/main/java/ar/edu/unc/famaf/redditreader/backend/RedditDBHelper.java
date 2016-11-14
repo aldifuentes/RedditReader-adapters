@@ -115,7 +115,32 @@ public class RedditDBHelper extends SQLiteOpenHelper {
 
         cursor.close();
         return postModelList;
+    }
 
+    public List<PostModel> getNextFivePosts(int fromIndex) {
+        List<PostModel> postModelList = new ArrayList<PostModel>();
+        String selectQuery = "SELECT  * FROM " + REDDIT_TABLE + " LIMIT 5";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                PostModel postModel = new PostModel();
+                postModel.setTitle(cursor.getString(1));
+                postModel.setAuthor(cursor.getString(2));
+                postModel.setCreated(cursor.getString(3));
+                postModel.setSubreddit(cursor.getString(4));
+                postModel.setComments(cursor.getString(5));
+                //postModel.setImage(cursor.getBlob(6));
+                postModel.setUrl(cursor.getString(7));
+
+                postModelList.add(postModel);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return postModelList;
     }
 
     // Getting posts Count
