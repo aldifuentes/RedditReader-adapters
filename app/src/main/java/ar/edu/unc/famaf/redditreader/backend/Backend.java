@@ -14,14 +14,15 @@ public class Backend {
         return ourInstance;
     }
 
-    private List<PostModel> mListPostModel;
+    //private List<PostModel> mListPostModel;
+    private Listing mListPostModel;
 
 
     private int countReturnedPosts = 0;
-
+    private String lastName = null;
 
     private Backend() {
-        mListPostModel = new ArrayList<PostModel>();
+        mListPostModel = new Listing();
 
 
 //
@@ -80,6 +81,7 @@ public class Backend {
 
     }
 
+/*
     public void getTopPosts(final TopPostIterator iterator) {
         // TODO: implement me
 
@@ -105,24 +107,39 @@ public class Backend {
         //return mListPostModel;
 
     }
+*/
 
     public void getNextPosts(final PostsIteratorListener listener) {
-        new GetNextPostsTask() {
-            @Override
-            protected  void onPostExecute(Listing response) {
-                System.out.println("[*] onPostExecute -> " + response.getPostModelList().size() + " - " + countReturnedPosts);
+        final RedditDBHelper db = RedditDBHelper.getInstance(null);
+        System.out.println("[*] Backend->getNextPosts ");
 
-                RedditDBHelper db = RedditDBHelper.getInstance(null);
+        if (countReturnedPosts%50 == 0) {
+            System.out.println("[*] Backend->getNextPosts  -> Dowload next 50 - " + countReturnedPosts);
 
-                if (response.getPostModelList().size() == 50) {
-                    for (PostModel p : response.getPostModelList()) {
+            new GetNextPostsTask() {
+                @Override
+                protected void onPostExecute(Listing response) {
+                    System.out.println("[*] onPostExecute -> " + response.getPostModelList().size() + " - " + countReturnedPosts);
+
+                    int pos = countReturnedPosts + 1;
+                    List<PostModel> pmList = response.getPostModelList();
+                    for (PostModel p : pmList) {
+                        p.setPostion(pos);
                         db.addPost(p);
+                        pos++;
                     }
+
+                    lastName = pmList.get(pmList.size()-1).getName();
+                    listener.nextPosts(db.getNextFivePosts(countReturnedPosts));
+                    countReturnedPosts += 5;
                 }
+            }.execute(lastName);
+        } else {
+            System.out.println("[*] Backend->getNextPosts  -> Dowload next " + countReturnedPosts);
 
-                listener.nextPosts(db.getNextFivePosts(countReturnedPosts));
-                countReturnedPosts += 5;
-
+            listener.nextPosts(db.getNextFivePosts(countReturnedPosts));
+            countReturnedPosts += 5;
+        }
 
                 /*
                 List<PostModel> postsList = new ArrayList<PostModel>();
@@ -138,7 +155,6 @@ public class Backend {
                 listener.nextPosts(postsList);
                 countReturnedPosts += 5;
                 */
-            }
-        }.execute(countReturnedPosts);
+
     }
 }

@@ -3,6 +3,7 @@ package ar.edu.unc.famaf.redditreader.backend;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
@@ -24,11 +25,13 @@ public class RedditDBHelper extends SQLiteOpenHelper {
 
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "RedditDB.db";
+    private static final String DATABASE_NAME = "RedditDB2.db";
 
     private static final String REDDIT_TABLE = "reddit";
 
     private static final String _ID = "id";
+    private static final String POSITION = "position";
+    private static final String NAME = "name";
     private static final String TITLE = "title";
     private static final String AUTHOR = "author";
     private static final String CREATED = "created";
@@ -52,6 +55,8 @@ public class RedditDBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_REDDIT_TABLE = "CREATE TABLE " + REDDIT_TABLE + "("
                 + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + POSITION + " INTEGER,"
+                + NAME + " TEXT,"
                 + TITLE + " TEXT,"
                 + AUTHOR + " TEXT,"
                 + CREATED + " TEXT,"
@@ -75,6 +80,8 @@ public class RedditDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(POSITION, postModel.getPostion());
+        values.put(NAME, postModel.getName());
         values.put(TITLE, postModel.getTitle());
         values.put(AUTHOR, postModel.getAuthor());
         values.put(CREATED, postModel.getCreated());
@@ -83,7 +90,11 @@ public class RedditDBHelper extends SQLiteOpenHelper {
         //values.put(IMAGE, postModel.getImageBytes());
         values.put(URL, postModel.getUrl());
 
-        db.insert(REDDIT_TABLE, null, values);
+        try {
+            long xxx = db.insertOrThrow(REDDIT_TABLE, null, values);
+        }catch (SQLException q){
+            System.out.println(q.toString());
+        }
         db.close();
     }
 
@@ -101,13 +112,13 @@ public class RedditDBHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 PostModel postModel = new PostModel();
-                postModel.setTitle(cursor.getString(1));
-                postModel.setAuthor(cursor.getString(2));
-                postModel.setCreated(cursor.getString(3));
-                postModel.setSubreddit(cursor.getString(4));
-                postModel.setComments(cursor.getString(5));
+                postModel.setTitle(cursor.getString(3));
+                postModel.setAuthor(cursor.getString(4));
+                postModel.setCreated(cursor.getString(5));
+                postModel.setSubreddit(cursor.getString(6));
+                postModel.setComments(cursor.getString(7));
                 //postModel.setImage(cursor.getBlob(6));
-                postModel.setUrl(cursor.getString(7));
+                postModel.setUrl(cursor.getString(9));
 
                 postModelList.add(postModel);
             } while (cursor.moveToNext());
@@ -119,7 +130,7 @@ public class RedditDBHelper extends SQLiteOpenHelper {
 
     public List<PostModel> getNextFivePosts(int fromIndex) {
         List<PostModel> postModelList = new ArrayList<PostModel>();
-        String selectQuery = "SELECT  * FROM " + REDDIT_TABLE + " LIMIT 5";
+        String selectQuery = "SELECT * FROM " + REDDIT_TABLE + " WHERE " + POSITION + ">" +fromIndex + " LIMIT 5";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -127,13 +138,15 @@ public class RedditDBHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 PostModel postModel = new PostModel();
-                postModel.setTitle(cursor.getString(1));
-                postModel.setAuthor(cursor.getString(2));
-                postModel.setCreated(cursor.getString(3));
-                postModel.setSubreddit(cursor.getString(4));
-                postModel.setComments(cursor.getString(5));
+                postModel.setPostion(cursor.getInt(1));
+                String xx = cursor.getString(2);
+                postModel.setTitle(cursor.getString(3));
+                postModel.setAuthor(cursor.getString(4));
+                postModel.setCreated(cursor.getString(5));
+                postModel.setSubreddit(cursor.getString(6));
+                postModel.setComments(cursor.getString(7));
                 //postModel.setImage(cursor.getBlob(6));
-                postModel.setUrl(cursor.getString(7));
+                postModel.setUrl(cursor.getString(9));
 
                 postModelList.add(postModel);
             } while (cursor.moveToNext());
@@ -173,10 +186,10 @@ public class RedditDBHelper extends SQLiteOpenHelper {
             cursor.moveToFirst();
 
         try{
-            return getImage(cursor.getBlob(6));
+            return getImage(cursor.getBlob(8));
         }catch(Exception e){
             e.printStackTrace();
-            System.out.println("ERROR EN getImage");
+            System.out.println("ERROR en getImage");
             return null;
         }
     }

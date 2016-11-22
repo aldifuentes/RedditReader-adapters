@@ -8,6 +8,8 @@ import java.io.ByteArrayOutputStream;
 import java.net.URL;
 
 public class PostModel {
+    private int mPostion;
+    private String mName;
     private String mTitle;
     private String mAuthor;
     private String mCreated;
@@ -17,8 +19,9 @@ public class PostModel {
     //private Bitmap mImage;
     private String mUrl;
 
-    public PostModel(String mTitle, String mAuthor, String mCreated, String mSubreddit, String mComments, int mImage) {
+    public PostModel(String mName, String mTitle, String mAuthor, String mCreated, String mSubreddit, String mComments, int mImage) {
         super();
+        this.mName = mName;
         this.mTitle = mTitle;
         this.mAuthor = mAuthor;
         this.mCreated = mCreated;
@@ -41,10 +44,18 @@ public class PostModel {
         super();
     }
 
+    public int getPostion() { return mPostion; }
 
-    public String getTitle() {
-        return mTitle;
+    public void setPostion(int mPostion) { this.mPostion = mPostion; }
+
+    public String getName() { return mName; }
+
+    public void setName(String name) {
+        this.mName = name;
     }
+
+
+    public String getTitle() { return mTitle; }
 
     public void setTitle(String title) {
         this.mTitle = title;

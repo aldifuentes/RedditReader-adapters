@@ -100,6 +100,9 @@ public class Parser {
         while (reader.hasNext()) {
             String name = reader.nextName();
             switch (name) {
+                case "name":
+                    post.setName(reader.nextString());
+                    break;
                 case "title":
                     post.setTitle(reader.nextString());
                     break;
@@ -118,7 +121,7 @@ public class Parser {
                     post.setSubreddit("/r/"+reader.nextString());
                     break;
                 case "num_comments":
-                    post.setComments(reader.nextString());
+                    post.setComments(reader.nextString()+" comments");
                     break;
                 case "thumbnail":
                     post.setUrl(reader.nextString());
