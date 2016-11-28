@@ -25,7 +25,7 @@ public class RedditDBHelper extends SQLiteOpenHelper {
 
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "RedditDB2.db";
+    private static final String DATABASE_NAME = "RedditDB3.db";
 
     private static final String REDDIT_TABLE = "reddit";
 
@@ -39,6 +39,7 @@ public class RedditDBHelper extends SQLiteOpenHelper {
     private static final String COMMENTS = "comments";
     private static final String IMAGE = "image";
     private static final String URL = "url";
+    private static final String LINK = "link";
 
     private RedditDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -63,7 +64,8 @@ public class RedditDBHelper extends SQLiteOpenHelper {
                 + SUBREDDIT + " TEXT,"
                 + COMMENTS + " TEXT,"
                 + IMAGE + " BLOB,"
-                + URL + " TEXT"
+                + URL + " TEXT,"
+                + LINK + " TEXT"
                 + ")";
         db.execSQL(CREATE_REDDIT_TABLE);
     }
@@ -89,6 +91,7 @@ public class RedditDBHelper extends SQLiteOpenHelper {
         values.put(COMMENTS, postModel.getComments());
         //values.put(IMAGE, postModel.getImageBytes());
         values.put(URL, postModel.getUrl());
+        values.put(LINK, postModel.getLink());
 
         try {
             long xxx = db.insertOrThrow(REDDIT_TABLE, null, values);
@@ -119,6 +122,7 @@ public class RedditDBHelper extends SQLiteOpenHelper {
                 postModel.setComments(cursor.getString(7));
                 //postModel.setImage(cursor.getBlob(6));
                 postModel.setUrl(cursor.getString(9));
+                postModel.setLink(cursor.getString(10));
 
                 postModelList.add(postModel);
             } while (cursor.moveToNext());
@@ -147,6 +151,7 @@ public class RedditDBHelper extends SQLiteOpenHelper {
                 postModel.setComments(cursor.getString(7));
                 //postModel.setImage(cursor.getBlob(6));
                 postModel.setUrl(cursor.getString(9));
+                postModel.setLink(cursor.getString(10));
 
                 postModelList.add(postModel);
             } while (cursor.moveToNext());

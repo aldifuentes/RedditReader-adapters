@@ -5,9 +5,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
 import java.net.URL;
 
-public class PostModel {
+public class PostModel implements Serializable {
     private int mPostion;
     private String mName;
     private String mTitle;
@@ -18,6 +19,7 @@ public class PostModel {
     private int mImage;
     //private Bitmap mImage;
     private String mUrl;
+    private String mLink;
 
     public PostModel(String mName, String mTitle, String mAuthor, String mCreated, String mSubreddit, String mComments, int mImage) {
         super();
@@ -40,6 +42,17 @@ public class PostModel {
         this.mUrl = mUrl;
     }
 
+    public PostModel(String mTitle, String mAuthor, String mCreated, String mSubreddit, String mComments, String mUrl, String mLink) {
+        super();
+        this.mTitle = mTitle;
+        this.mAuthor = mAuthor;
+        this.mCreated = mCreated;
+        this.mSubreddit = mSubreddit;
+        this.mComments = mComments;
+        this.mUrl = mUrl;
+        this.mLink = mLink;
+    }
+
     public PostModel() {
         super();
     }
@@ -54,6 +67,11 @@ public class PostModel {
         this.mName = name;
     }
 
+    public String getLink() { return mLink; }
+
+    public void setLink(String link) {
+        this.mLink = link;
+    }
 
     public String getTitle() { return mTitle; }
 

@@ -1,6 +1,8 @@
 package ar.edu.unc.famaf.redditreader.ui;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.Fragment;
@@ -8,6 +10,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -28,6 +31,12 @@ import ar.edu.unc.famaf.redditreader.model.PostModel;
 public class NewsActivityFragment extends Fragment {
     List<PostModel> postsList = new ArrayList<PostModel>();
     PostAdapter adapter;
+
+    OnPostItemSelectedListener mCallback;
+
+    public interface OnPostItemSelectedListener{
+        void onPostItemPicked(PostModel post);
+    }
 
     public NewsActivityFragment() {
     }
@@ -75,7 +84,7 @@ public class NewsActivityFragment extends Fragment {
 
 
         adapter = new PostAdapter(getActivity(), R.layout.listview_item_row, postsList);
-        ListView postsLV = (ListView) view.findViewById(R.id.postsLV);
+        final ListView postsLV = (ListView) view.findViewById(R.id.postsLV);
         postsLV.setAdapter(adapter);
         postsLV.setOnScrollListener(new EndlessScrollListener() {
             @Override
@@ -98,6 +107,18 @@ public class NewsActivityFragment extends Fragment {
             }
         });
 
+        postsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+           @Override
+
+
+           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+               PostModel post = (PostModel) postsLV.getItemAtPosition(position);
+               System.out.println("[*] item -> "+ position);
+
+               mCallback.onPostItemPicked(post);
+           }
+       });
+
 //
 //            try {
 //                Thread.sleep(10000);
@@ -116,6 +137,21 @@ public class NewsActivityFragment extends Fragment {
 
     }
 
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        Activity activity = getActivity();
+
+        try {
+            mCallback = (OnPostItemSelectedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnPostItemSelectedListener");
+        }
+    }
 
 
 

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,11 +17,12 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import ar.edu.unc.famaf.redditreader.R;
+import ar.edu.unc.famaf.redditreader.model.PostModel;
 import ar.edu.unc.famaf.redditreader.utils.NetworkReceiver;
 
 import static ar.edu.unc.famaf.redditreader.utils.NetworkReceiver.SHOW_DIALOG_ACTION;
 
-public class NewsActivity extends AppCompatActivity {
+public class NewsActivity extends AppCompatActivity implements NewsActivityFragment.OnPostItemSelectedListener{
     private NetworkReceiver checkConnectionReceiver = null;
     BroadcastReceiver showDialogReceiver = null;
 
@@ -89,5 +91,14 @@ public class NewsActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPostItemPicked(PostModel post) {
+        System.out.println("[*] onPostItemPicked title -> "+ post.getTitle());
+
+        Intent i = new Intent(this, NewsDetailActivity.class);
+        i.putExtra("POST", post);
+        startActivity(i);
     }
 }
