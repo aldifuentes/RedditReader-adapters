@@ -113,7 +113,7 @@ public class Parser {
                     String tmp = reader.nextString();
                     tmp = tmp.substring(0, tmp.length() - 2);
                     long timeStamp = Long.parseLong(tmp) * 1000;
-                    DateFormat sdf = new SimpleDateFormat("dd/M/yyyy hh:mm");
+                    DateFormat sdf = new SimpleDateFormat("dd/M hh:mm");
                     Date netDate = (new Date(timeStamp));
                     post.setCreated(sdf.format(netDate));
                     break;
