@@ -1,10 +1,7 @@
 package ar.edu.unc.famaf.redditreader.backend;
 
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
-import ar.edu.unc.famaf.redditreader.R;
 import ar.edu.unc.famaf.redditreader.model.PostModel;
 
 public class Backend {
@@ -14,15 +11,18 @@ public class Backend {
         return ourInstance;
     }
 
-    //private List<PostModel> mListPostModel;
-    private Listing mListPostModel;
+
+    //private Listing mListPostModel;
 
 
     private int countReturnedPosts = 0;
-    private String lastName = null;
+    private String lastPostName = null;
+
+    private int countReturnedHotPosts = 0;
+    private String lastHotPostName = null;
 
     private Backend() {
-        mListPostModel = new Listing();
+        //mListPostModel = new Listing();
 
 
 //
@@ -109,12 +109,12 @@ public class Backend {
     }
 */
 
-    public void getNextPosts(final PostsIteratorListener listener) {
+    public void getNextTopPosts(final PostsIteratorListener listener) {
         final RedditDBHelper db = RedditDBHelper.getInstance(null);
-        System.out.println("[*] Backend->getNextPosts ");
+        System.out.println("[*] Backend->getNextTopPosts ");
 
         if (countReturnedPosts%50 == 0) {
-            System.out.println("[*] Backend->getNextPosts  -> Dowload next 50 - " + countReturnedPosts);
+            System.out.println("[*] Backend->getNextTopPosts  -> Dowload next 50 - " + countReturnedPosts);
 
             new GetNextPostsTask() {
                 @Override
@@ -124,37 +124,56 @@ public class Backend {
                     int pos = countReturnedPosts + 1;
                     List<PostModel> pmList = response.getPostModelList();
                     for (PostModel p : pmList) {
-                        p.setPostion(pos);
-                        db.addPost(p);
+                        p.setPosition(pos);
+                        db.addTopPost(p);
                         pos++;
                     }
 
-                    lastName = pmList.get(pmList.size()-1).getName();
-                    listener.nextPosts(db.getNextFivePosts(countReturnedPosts));
+                    lastPostName = pmList.get(pmList.size()-1).getName();
+                    listener.nextPosts(db.getNextTopFivePosts(countReturnedPosts));
                     countReturnedPosts += 5;
                 }
-            }.execute(lastName);
+            }.execute("top", lastPostName);
         } else {
-            System.out.println("[*] Backend->getNextPosts  -> Dowload next " + countReturnedPosts);
+            System.out.println("[*] Backend->getNextTopPosts  -> Dowload next " + countReturnedPosts);
 
-            listener.nextPosts(db.getNextFivePosts(countReturnedPosts));
+            listener.nextPosts(db.getNextTopFivePosts(countReturnedPosts));
             countReturnedPosts += 5;
         }
-
-                /*
-                List<PostModel> postsList = new ArrayList<PostModel>();
-                PostModel p1 = new PostModel();
-                p1.setTitle("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor");
-                p1.setAuthor("Autor1");
-                p1.setCreated("Hace 4h");
-                p1.setSubreddit("/r/today");
-                p1.setComments("2112 comentarios");
-                p1.setUrl("http://japanlover.me/goodies/kawaii/02-icons/nomnom-01.png");
-                postsList.add(p1);postsList.add(p1);postsList.add(p1);postsList.add(p1);postsList.add(p1);
-
-                listener.nextPosts(postsList);
-                countReturnedPosts += 5;
-                */
-
     }
+
+
+    public void getNextHotPosts(final PostsIteratorListener listener) {
+        final RedditDBHelper db = RedditDBHelper.getInstance(null);
+        System.out.println("[*] Backend->getNextHotPosts ");
+
+        if (countReturnedHotPosts%50 == 0) {
+            System.out.println("[*] Backend->getNextHotPosts  -> Dowload next 50 - " + countReturnedHotPosts);
+
+            new GetNextPostsTask() {
+                @Override
+                protected void onPostExecute(Listing response) {
+                    System.out.println("[*] HOT onPostExecute -> " + response.getPostModelList().size() + " - " + countReturnedHotPosts);
+
+                    int pos = countReturnedHotPosts + 1;
+                    List<PostModel> pmList = response.getPostModelList();
+                    for (PostModel p : pmList) {
+                        p.setPosition(pos);
+                        db.addHotPost(p);
+                        pos++;
+                    }
+
+                    lastHotPostName = pmList.get(pmList.size()-1).getName();
+                    listener.nextPosts(db.getNextHotFivePosts(countReturnedHotPosts));
+                    countReturnedHotPosts += 5;
+                }
+            }.execute("hot", lastHotPostName);
+        } else {
+            System.out.println("[*] Backend->getNextHotPosts  -> Dowload next " + countReturnedHotPosts);
+
+            listener.nextPosts(db.getNextHotFivePosts(countReturnedHotPosts));
+            countReturnedHotPosts += 5;
+        }
+    }
+
 }

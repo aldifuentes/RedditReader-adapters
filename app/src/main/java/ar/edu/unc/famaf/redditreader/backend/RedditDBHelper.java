@@ -10,7 +10,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 ;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,7 @@ public class RedditDBHelper extends SQLiteOpenHelper {
 
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "RedditDB3.db";
+    private static final String DATABASE_NAME = "RedditDB4.db";
 
     private static final String REDDIT_TABLE = "reddit";
 
@@ -40,6 +39,7 @@ public class RedditDBHelper extends SQLiteOpenHelper {
     private static final String IMAGE = "image";
     private static final String URL = "url";
     private static final String LINK = "link";
+    private static final String CATEGORY = "category";
 
     private RedditDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -65,7 +65,8 @@ public class RedditDBHelper extends SQLiteOpenHelper {
                 + COMMENTS + " TEXT,"
                 + IMAGE + " BLOB,"
                 + URL + " TEXT,"
-                + LINK + " TEXT"
+                + LINK + " TEXT,"
+                + CATEGORY + " TEXT"
                 + ")";
         db.execSQL(CREATE_REDDIT_TABLE);
     }
@@ -78,11 +79,11 @@ public class RedditDBHelper extends SQLiteOpenHelper {
 
 
     // Adding new post
-    public void addPost(PostModel postModel) {
+    private void addPost(String category, PostModel postModel) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(POSITION, postModel.getPostion());
+        values.put(POSITION, postModel.getPosition());
         values.put(NAME, postModel.getName());
         values.put(TITLE, postModel.getTitle());
         values.put(AUTHOR, postModel.getAuthor());
@@ -92,6 +93,7 @@ public class RedditDBHelper extends SQLiteOpenHelper {
         //values.put(IMAGE, postModel.getImageBytes());
         values.put(URL, postModel.getUrl());
         values.put(LINK, postModel.getLink());
+        values.put(CATEGORY, category);
 
         try {
             long xxx = db.insertOrThrow(REDDIT_TABLE, null, values);
@@ -99,6 +101,14 @@ public class RedditDBHelper extends SQLiteOpenHelper {
             System.out.println(q.toString());
         }
         db.close();
+    }
+
+    public void addTopPost(PostModel postModel) {
+        addPost("top", postModel);
+    }
+
+    public void addHotPost(PostModel postModel) {
+        addPost("hot", postModel);
     }
 
     // Getting single post
@@ -132,9 +142,10 @@ public class RedditDBHelper extends SQLiteOpenHelper {
         return postModelList;
     }
 
-    public List<PostModel> getNextFivePosts(int fromIndex) {
+    private List<PostModel> getNextFivePosts(String category, int fromIndex) {
         List<PostModel> postModelList = new ArrayList<PostModel>();
-        String selectQuery = "SELECT * FROM " + REDDIT_TABLE + " WHERE " + POSITION + ">" +fromIndex + " LIMIT 5";
+        String selectQuery = "SELECT * FROM " + REDDIT_TABLE + " WHERE " + CATEGORY + " LIKE '" + category + "' AND "
+                + POSITION + ">" +fromIndex + " LIMIT 5";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -142,7 +153,7 @@ public class RedditDBHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 PostModel postModel = new PostModel();
-                postModel.setPostion(cursor.getInt(1));
+                postModel.setPosition(cursor.getInt(1));
                 String xx = cursor.getString(2);
                 postModel.setTitle(cursor.getString(3));
                 postModel.setAuthor(cursor.getString(4));
@@ -159,6 +170,14 @@ public class RedditDBHelper extends SQLiteOpenHelper {
 
         cursor.close();
         return postModelList;
+    }
+
+    public List<PostModel> getNextHotFivePosts(int fromIndex) {
+        return getNextFivePosts("hot", fromIndex);
+    }
+
+    public List<PostModel> getNextTopFivePosts(int fromIndex) {
+        return getNextFivePosts("top", fromIndex);
     }
 
     // Getting posts Count

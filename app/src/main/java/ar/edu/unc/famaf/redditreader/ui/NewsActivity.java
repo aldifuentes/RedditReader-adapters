@@ -7,31 +7,88 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import ar.edu.unc.famaf.redditreader.R;
+import ar.edu.unc.famaf.redditreader.backend.OnPostItemSelectedListener;
+import ar.edu.unc.famaf.redditreader.backend.RedditDBHelper;
 import ar.edu.unc.famaf.redditreader.model.PostModel;
 import ar.edu.unc.famaf.redditreader.utils.NetworkReceiver;
 
 import static ar.edu.unc.famaf.redditreader.utils.NetworkReceiver.SHOW_DIALOG_ACTION;
 
-public class NewsActivity extends AppCompatActivity implements NewsActivityFragment.OnPostItemSelectedListener{
+public class NewsActivity extends AppCompatActivity implements OnPostItemSelectedListener{
+    public static final int CATEGORY_HOT = 0;
+    public static final int CATEGORY_NEW = 1;
+    public static final int CATEGORY_TOP = 2;
+
     private NetworkReceiver checkConnectionReceiver = null;
     BroadcastReceiver showDialogReceiver = null;
+
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+
+    private Fragment frHot;
+    private Fragment frTop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        RedditDBHelper db = RedditDBHelper.getInstance(this);
+        db.deleteAllPosts();
+
+        //////////
+        String[] mCategories = new String[3];
+        mCategories[CATEGORY_HOT] = "Hot";
+        mCategories[CATEGORY_NEW] = "New";
+        mCategories[CATEGORY_TOP] = "Top";
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, mCategories));
+
+        frHot = new HotActivityFragment();
+        frTop = new TopActivityFragment();
+
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                System.out.println("[*] Drawer->onItemClick -> id = " + id );
+
+                if (id==CATEGORY_HOT) {
+                    toolbar.setTitle("HOT");
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, frHot).commit();
+                }
+                if (id==CATEGORY_NEW) {
+                    toolbar.setTitle("NEW");
+                }
+                if (id==CATEGORY_TOP) {
+                    toolbar.setTitle("TOP");
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, frTop).commit();
+                }
+
+
+
+                mDrawerList.setItemChecked(position, true);
+                mDrawerLayout.closeDrawer(mDrawerList);
+            }
+        });
+        /////////
+
 
 
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);

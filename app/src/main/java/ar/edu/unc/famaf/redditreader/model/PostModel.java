@@ -1,15 +1,10 @@
 package ar.edu.unc.famaf.redditreader.model;
 
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
-import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
-import java.net.URL;
 
 public class PostModel implements Serializable {
-    private int mPostion;
+    private int mPosition;
     private String mName;
     private String mTitle;
     private String mAuthor;
@@ -20,6 +15,7 @@ public class PostModel implements Serializable {
     //private Bitmap mImage;
     private String mUrl;
     private String mLink;
+
 
     public PostModel(String mName, String mTitle, String mAuthor, String mCreated, String mSubreddit, String mComments, int mImage) {
         super();
@@ -57,9 +53,9 @@ public class PostModel implements Serializable {
         super();
     }
 
-    public int getPostion() { return mPostion; }
+    public int getPosition() { return mPosition; }
 
-    public void setPostion(int mPostion) { this.mPostion = mPostion; }
+    public void setPosition(int mPosition) { this.mPosition = mPosition; }
 
     public String getName() { return mName; }
 

@@ -50,13 +50,13 @@ public class NewsDetailActivityFragment extends Fragment {
         subreddit.setText(post.getSubreddit());
 
         TextView date = (TextView) view.findViewById(R.id.detail_date);
-        date.setText(post.getCreated());
+        date.setText("Submitted on " + post.getCreated());
 
         TextView title = (TextView) view.findViewById(R.id.detail_title);
         title.setText(post.getTitle());
 
         TextView author = (TextView) view.findViewById(R.id.detail_author);
-        author.setText(post.getAuthor());
+        author.setText("By " + post.getAuthor());
 
         TextView link = (TextView) view.findViewById(R.id.detail_link);
         link.setText(post.getLink());

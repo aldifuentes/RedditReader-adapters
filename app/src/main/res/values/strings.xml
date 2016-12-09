@@ -24,4 +24,6 @@
     <string name="title_activity_link">LinkActivity</string>
 
 
+    <string name="title_main_activity">MainActivity</string>
+
 </resources>

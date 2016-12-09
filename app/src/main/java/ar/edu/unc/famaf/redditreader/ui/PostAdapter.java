@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import ar.edu.unc.famaf.redditreader.R;
@@ -31,9 +32,55 @@ public class PostAdapter extends ArrayAdapter {
 
     private List<PostModel> mListPostModel;
 
+    private List<PostModel> mListHotPostModel = new ArrayList<PostModel>();
+    private List<PostModel> mListNewPostModel = new ArrayList<PostModel>();;
+    private List<PostModel> mListTopPostModel = new ArrayList<PostModel>();;
+
     public PostAdapter(Context context, int resource, List<PostModel> list) {
         super(context, resource);
         mListPostModel = list;
+    }
+
+    public void xxxHot() {
+        PostModel p1 = new PostModel();
+        p1.setTitle("Hot");
+        p1.setAuthor("Autor1");
+        p1.setCreated("Hace 4h");
+        p1.setSubreddit("/r/today");
+        p1.setComments("2112 comentarios");
+        p1.setUrl("http://japanlover.me/goodies/kawaii/02-icons/nomnom-01.png");
+        mListHotPostModel.add(p1);
+        mListPostModel.clear();
+        mListPostModel.addAll(mListHotPostModel);
+        notifyDataSetChanged();
+    }
+
+    public void xxxNew() {
+        PostModel p1 = new PostModel();
+        p1.setTitle("New");
+        p1.setAuthor("Autor1");
+        p1.setCreated("Hace 4h");
+        p1.setSubreddit("/r/today");
+        p1.setComments("2112 comentarios");
+        p1.setUrl("http://japanlover.me/goodies/kawaii/02-icons/nomnom-01.png");
+        mListNewPostModel.add(p1);
+        mListPostModel.clear();
+        mListPostModel.addAll(mListNewPostModel);
+        notifyDataSetChanged();
+    }
+
+    public void xxxTop() {
+        PostModel p1 = new PostModel();
+        p1.setTitle("Top");
+        p1.setAuthor("Autor1");
+        p1.setCreated("Hace 4h");
+        p1.setSubreddit("/r/today");
+        p1.setComments("2112 comentarios");
+        p1.setUrl("http://japanlover.me/goodies/kawaii/02-icons/nomnom-01.png");
+        mListTopPostModel.add(p1);
+        mListPostModel.clear();
+        mListPostModel.addAll(mListTopPostModel);
+        notifyDataSetChanged();
     }
 
     @Override

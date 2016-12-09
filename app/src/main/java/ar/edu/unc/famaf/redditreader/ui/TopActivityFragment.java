@@ -2,7 +2,6 @@ package ar.edu.unc.famaf.redditreader.ui;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.Fragment;
@@ -19,7 +18,7 @@ import java.util.List;
 import ar.edu.unc.famaf.redditreader.R;
 import ar.edu.unc.famaf.redditreader.backend.Backend;
 import ar.edu.unc.famaf.redditreader.backend.EndlessScrollListener;
-import ar.edu.unc.famaf.redditreader.backend.Listing;
+import ar.edu.unc.famaf.redditreader.backend.OnPostItemSelectedListener;
 import ar.edu.unc.famaf.redditreader.backend.PostsIteratorListener;
 import ar.edu.unc.famaf.redditreader.backend.RedditDBHelper;
 import ar.edu.unc.famaf.redditreader.model.PostModel;
@@ -28,17 +27,13 @@ import ar.edu.unc.famaf.redditreader.model.PostModel;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class NewsActivityFragment extends Fragment {
+public class TopActivityFragment extends Fragment {
     List<PostModel> postsList = new ArrayList<PostModel>();
-    PostAdapter adapter;
+    PostAdapter adapter = null;
 
     OnPostItemSelectedListener mCallback;
 
-    public interface OnPostItemSelectedListener{
-        void onPostItemPicked(PostModel post);
-    }
-
-    public NewsActivityFragment() {
+    public TopActivityFragment() {
     }
 
     @Override
@@ -48,18 +43,9 @@ public class NewsActivityFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_news, container, false);
 
         RedditDBHelper db = RedditDBHelper.getInstance(this.getContext());
-        db.deleteAllPosts();
+        //db.deleteAllPosts();
 
-        /*
-        Backend.getInstance().getTopPosts(new TopPostIterator() {
-            @Override
-            public void nextPosts(List<PostModel> postsList) {
-                PostAdapter adapter = new PostAdapter(getActivity(), R.layout.listview_item_row, postsList);
-                ListView postsLV = (ListView) getView().findViewById(R.id.postsLV);
-                postsLV.setAdapter(adapter);
-            }
-        });
-        */
+        System.out.println("[*] Top->onCreateView -> postsListCount: " + postsList.size());
 
 
         /*
@@ -72,18 +58,22 @@ public class NewsActivityFragment extends Fragment {
         p1.setUrl("http://japanlover.me/goodies/kawaii/02-icons/nomnom-01.png");
         postsList.add(p1);
         */
-        Backend.getInstance().getNextPosts(new PostsIteratorListener() {
-            @Override
-            public void nextPosts(List<PostModel> lst) {
-                System.out.println("[*] PostsIteratorListener->nextPosts");
-                postsList.addAll(lst);
-                adapter.notifyDataSetChanged();
-            }
-        });
+        if (adapter==null) {
+            adapter = new PostAdapter(getActivity(), R.layout.listview_item_row, postsList);
+        }
+
+        if (postsList.isEmpty()) {
+            Backend.getInstance().getNextTopPosts(new PostsIteratorListener() {
+                @Override
+                public void nextPosts(List<PostModel> lst) {
+                    System.out.println("[*] PostsIteratorListener->nextPosts");
+                    postsList.addAll(lst);
+                    adapter.notifyDataSetChanged();
+                }
+            });
+        }
 
 
-
-        adapter = new PostAdapter(getActivity(), R.layout.listview_item_row, postsList);
         final ListView postsLV = (ListView) view.findViewById(R.id.postsLV);
         postsLV.setAdapter(adapter);
         postsLV.setOnScrollListener(new EndlessScrollListener() {
@@ -91,8 +81,7 @@ public class NewsActivityFragment extends Fragment {
             public boolean onLoadMore(int page, int totalItemsCount) {
                 System.out.println("[*] onLoadMore -> " + page + " - " + totalItemsCount);
 
-
-                Backend.getInstance().getNextPosts(new PostsIteratorListener() {
+                Backend.getInstance().getNextTopPosts(new PostsIteratorListener() {
                     @Override
                     public void nextPosts(List<PostModel> lst) {
                         System.out.println("[*] PostsIteratorListener->nextPosts");
@@ -110,7 +99,6 @@ public class NewsActivityFragment extends Fragment {
         postsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
            @Override
 
-
            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                PostModel post = (PostModel) postsLV.getItemAtPosition(position);
                System.out.println("[*] item -> "+ position);
@@ -119,19 +107,6 @@ public class NewsActivityFragment extends Fragment {
            }
        });
 
-//
-//            try {
-//                Thread.sleep(10000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//
-//            PostAdapter adapter = new PostAdapter(this.getContext(), R.layout.listview_item_row, tmp);
-//
-//            ListView postsLV = (ListView) v.findViewById(R.id.postsLV);
-//            postsLV.setAdapter(adapter);
-
-        //System.out.println("isOnline" + isOnline());
 
         return view;
 

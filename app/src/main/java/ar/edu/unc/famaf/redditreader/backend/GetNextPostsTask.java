@@ -18,16 +18,21 @@ public class GetNextPostsTask extends AsyncTask<String, Integer, Listing> {
     @Override
     protected Listing doInBackground(String... params){
         Listing response = new Listing();
-        String baseUrl = "https://www.reddit.com/top/.json?limit=50&after=";
         URL url = null;
 
-        String afterPostName = params[0];
+        String category = params[0];
+        String baseUrl = "https://www.reddit.com/"+category+"/.json?limit=50&after=";
+        System.out.println("[*] doInBackground -> category: " + category);
+
+
+        String afterPostName = params[1];
 
 
         System.out.println("[*] doInBackground -> " + afterPostName);
 
         try {
             url = new URL(baseUrl + afterPostName);
+            System.out.println("[*] doInBackground -> " + url.toString());
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
