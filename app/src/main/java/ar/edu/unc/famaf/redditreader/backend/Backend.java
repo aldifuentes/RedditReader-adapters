@@ -21,6 +21,9 @@ public class Backend {
     private int countReturnedHotPosts = 0;
     private String lastHotPostName = null;
 
+    private int countReturnedNewPosts = 0;
+    private String lastNewPostName = null;
+
     private Backend() {
         //mListPostModel = new Listing();
 
@@ -114,7 +117,7 @@ public class Backend {
         System.out.println("[*] Backend->getNextTopPosts ");
 
         if (countReturnedPosts%50 == 0) {
-            System.out.println("[*] Backend->getNextTopPosts  -> Dowload next 50 - " + countReturnedPosts);
+            System.out.println("[*] Backend->getNextTopPosts  -> Download next 50 - " + countReturnedPosts);
 
             new GetNextPostsTask() {
                 @Override
@@ -135,7 +138,7 @@ public class Backend {
                 }
             }.execute("top", lastPostName);
         } else {
-            System.out.println("[*] Backend->getNextTopPosts  -> Dowload next " + countReturnedPosts);
+            System.out.println("[*] Backend->getNextTopPosts  -> Download next " + countReturnedPosts);
 
             listener.nextPosts(db.getNextTopFivePosts(countReturnedPosts));
             countReturnedPosts += 5;
@@ -148,7 +151,7 @@ public class Backend {
         System.out.println("[*] Backend->getNextHotPosts ");
 
         if (countReturnedHotPosts%50 == 0) {
-            System.out.println("[*] Backend->getNextHotPosts  -> Dowload next 50 - " + countReturnedHotPosts);
+            System.out.println("[*] Backend->getNextHotPosts  -> Download next 50 - " + countReturnedHotPosts);
 
             new GetNextPostsTask() {
                 @Override
@@ -169,10 +172,43 @@ public class Backend {
                 }
             }.execute("hot", lastHotPostName);
         } else {
-            System.out.println("[*] Backend->getNextHotPosts  -> Dowload next " + countReturnedHotPosts);
+            System.out.println("[*] Backend->getNextHotPosts  -> Download next " + countReturnedHotPosts);
 
             listener.nextPosts(db.getNextHotFivePosts(countReturnedHotPosts));
             countReturnedHotPosts += 5;
+        }
+    }
+
+    public void getNextNewPosts(final PostsIteratorListener listener) {
+        final RedditDBHelper db = RedditDBHelper.getInstance(null);
+        System.out.println("[*] Backend->getNextNewPosts ");
+
+        if (countReturnedNewPosts%50 == 0) {
+            System.out.println("[*] Backend->getNextNewPosts  -> Download next 50 - " + countReturnedNewPosts);
+
+            new GetNextPostsTask() {
+                @Override
+                protected void onPostExecute(Listing response) {
+                    System.out.println("[*] NEW onPostExecute -> " + response.getPostModelList().size() + " - " + countReturnedNewPosts);
+
+                    int pos = countReturnedNewPosts + 1;
+                    List<PostModel> pmList = response.getPostModelList();
+                    for (PostModel p : pmList) {
+                        p.setPosition(pos);
+                        db.addNewPost(p);
+                        pos++;
+                    }
+
+                    lastNewPostName = pmList.get(pmList.size()-1).getName();
+                    listener.nextPosts(db.getNextNewFivePosts(countReturnedNewPosts));
+                    countReturnedNewPosts += 5;
+                }
+            }.execute("new", lastNewPostName);
+        } else {
+            System.out.println("[*] Backend->getNextNewPosts  -> Download next " + countReturnedNewPosts);
+
+            listener.nextPosts(db.getNextNewFivePosts(countReturnedNewPosts));
+            countReturnedNewPosts += 5;
         }
     }
 

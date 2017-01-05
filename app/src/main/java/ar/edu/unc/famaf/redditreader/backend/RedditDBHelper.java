@@ -111,6 +111,10 @@ public class RedditDBHelper extends SQLiteOpenHelper {
         addPost("hot", postModel);
     }
 
+    public void addNewPost(PostModel postModel) {
+        addPost("new", postModel);
+    }
+
     // Getting single post
     // public PostModel getPost(int id) {}
 
@@ -178,6 +182,10 @@ public class RedditDBHelper extends SQLiteOpenHelper {
 
     public List<PostModel> getNextTopFivePosts(int fromIndex) {
         return getNextFivePosts("top", fromIndex);
+    }
+
+    public List<PostModel> getNextNewFivePosts(int fromIndex) {
+        return getNextFivePosts("new", fromIndex);
     }
 
     // Getting posts Count

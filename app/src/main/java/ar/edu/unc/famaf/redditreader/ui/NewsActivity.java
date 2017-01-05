@@ -41,6 +41,7 @@ public class NewsActivity extends AppCompatActivity implements OnPostItemSelecte
 
     private Fragment frHot;
     private Fragment frTop;
+    private Fragment frNew;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +64,7 @@ public class NewsActivity extends AppCompatActivity implements OnPostItemSelecte
 
         frHot = new HotActivityFragment();
         frTop = new TopActivityFragment();
+        frNew = new NewActivityFragment();
 
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -75,6 +77,7 @@ public class NewsActivity extends AppCompatActivity implements OnPostItemSelecte
                 }
                 if (id==CATEGORY_NEW) {
                     toolbar.setTitle("NEW");
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, frNew).commit();
                 }
                 if (id==CATEGORY_TOP) {
                     toolbar.setTitle("TOP");
